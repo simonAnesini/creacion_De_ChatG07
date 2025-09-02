@@ -33,6 +33,8 @@ export default function Login() {
     useEffect(() => {
         console.log(contraseña)
     }, [contraseña])
+    
+    if (nuevoUsuario){} 
 
     return (
         <>
