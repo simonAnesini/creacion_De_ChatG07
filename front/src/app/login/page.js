@@ -34,7 +34,9 @@ export default function Login() {
         console.log(contraseña)
     }, [contraseña])
     
-    if (nuevoUsuario){} 
+    if (nuevoUsuario){
+
+    } 
 
     return (
         <>
@@ -46,7 +48,7 @@ export default function Login() {
             <h2>{nombre}</h2>
             <h2>{contraseña}</h2>
             <h2>{numero}</h2>
-            <Boton text="HOLA"></Boton>
+            <Boton text="HOLA" ></Boton>
         </>
 
     )
