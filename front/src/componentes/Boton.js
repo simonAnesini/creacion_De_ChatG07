@@ -8,7 +8,7 @@ export default function Boton(props) {
         <button className={
             clsx(
             {
-                [styles.estilos]: true,
+                [styles.estilosLogin] : props.tipo == "login",
             }
         )} onClick={props.onClick}>{props.text}</button>
     </>
