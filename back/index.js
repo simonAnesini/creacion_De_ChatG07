@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { realizarQuery } = require('./modulos/mysql');
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -179,3 +179,14 @@ app.listen(port, () => {
 
 
 //lo de arriba son cosas del trabajo anterior a borrar eventualmente, lo guardamos solo para usar de base
+app.get("/traerUsuarios", async (req,res) =>{
+  try {
+      const usuarios = await realizarQuery(
+        `select * from Users`
+      ) 
+    res.send(usuarios)
+  }catch (error) {
+     res.send(error)
+  }
+})
+
