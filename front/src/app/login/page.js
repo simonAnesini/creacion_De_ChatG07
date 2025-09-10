@@ -27,6 +27,23 @@ export default function Login() {
     setNuevo(event.target.checked);
   }
 
+  async function ingresar() {
+    console.log("hola")
+      let datos = {
+        numero: numero,
+        contraseña: contraseña,
+        nombre: nombre
+      }
+
+      let response = await fetch(`http://localhost:4000/traerUsuarios`, {
+        method: "POST",
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(datos)
+    })
+    let result = await response.json()
+    console.log(result)
+  }
+
   useEffect(() => {
     console.log(nombre);
   }, [nombre]);
@@ -50,7 +67,7 @@ export default function Login() {
             <h2>{nombre}</h2>
             <h2>{contraseña}</h2>
             <h2>{numero}</h2>
-            <Boton text="INGRESAR" tipo="login"></Boton>
+            <Boton text="INGRESAR" tipo="login" onClick={ingresar}></Boton>
       </div>
     </div>
     
