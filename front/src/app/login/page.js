@@ -30,17 +30,16 @@ export default function Login() {
   async function ingresar() {
     console.log("hola")
       let datos = {
-        numero: numero,
+        nombre: nombre,
         contraseña: contraseña,
-        nombre: nombre
+        numero: numero,
       }
-
       let response = await fetch(`http://localhost:4000/traerUsuarios`, {
         method: "POST",
         headers:{'Content-Type': 'application/json'},
-        body:JSON.stringify(datos)
+        body:JSON.stringify(datos),
     })
-    let result = await response.json()
+    
     console.log(result)
   }
 

@@ -179,7 +179,7 @@ app.listen(port, () => {
 
 
 //lo de arriba son cosas del trabajo anterior a borrar eventualmente, lo guardamos solo para usar de base
-app.get("/traerUsuarios", async (req,res) =>{
+app.get("/verUsuarios", async (req,res) =>{
   try {
       //Siempre q estoy en un get recibo los datos en el query
     console.log(req.query.parametro)
@@ -197,10 +197,10 @@ app.get("/traerUsuarios", async (req,res) =>{
 
 app.post("/traerUsuarios", async (req,res) =>{
   try {
-      //Siempre q estoy en un get recibo los datos en el body
+    
       let validacion = await realizarQuery(`SELECT * FROM Users WHERE numero = ${req.body.numero}`)
       if (validacion.length === 0) {
-        realizarQuery(`INSERT INTO Users (nombre, contraseña, numero) VALUES
+       await realizarQuery(`INSERT INTO Users (nombre, contraseña, numero) VALUES
           (${req.body.nombre}, ${req.body.contraseña}, ${req.body.numero}),`)
       } else {
         res.send("ya existe un usuario con este numero")
