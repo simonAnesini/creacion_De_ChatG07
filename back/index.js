@@ -35,11 +35,9 @@ app.post("/traerUsuarios", async function(req,res){
 app.get("/revisarUsuarios", async function(req,res){
   try {
     console.log("funcionando :D")
-      let validacion = await realizarQuery(`SELECT * FROM Users nombre=${req.query.nombre}", contraseña="${req.query.contraseña}", numero="${req.query.numero}`)
-      if (validacion.length === 0) {
-       await realizarQuery(`INSERT INTO Users (nombre, contraseña, numero) VALUES
-          ("${req.body.nombre}", "${req.body.contraseña}", "${req.body.numero}")`)
-          res.send(req.body.numero)
+      let validacion = await realizarQuery(`SELECT * FROM Users WHERE nombre="${req.query.numero}`)
+      if (validacion.length !== 0) {
+       
       } else {
         res.send("ya existe un usuario con este numero")
       }
