@@ -192,6 +192,9 @@ app.get("/traerUsuarios", async (req,res) =>{
   }
 })
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 app.post("/traerUsuarios", async (req,res) =>{
   try {
       //Siempre q estoy en un get recibo los datos en el body
@@ -212,3 +215,4 @@ app.post("/traerUsuarios", async (req,res) =>{
      res.send(error)
   }
 })
+
