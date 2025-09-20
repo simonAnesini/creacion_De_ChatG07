@@ -19,7 +19,9 @@ export default function Login() {
   }
 
   function modificarNumero(event) {
+    console.log(numero)
     setNumero(event.target.value);
+    
   }
 
   function checkboxActivado(event) {
@@ -28,47 +30,57 @@ export default function Login() {
   }
 
   async function ingresar() {
-    console.log("hola")
+    if (nuevoUsuario) {
+
       let datos = {
         nombre: nombre,
         contraseña: contraseña,
         numero: numero,
       }
-      let response = await fetch(`http://localhost:4000/traerUsuarios`, {
+      console.log(nombre)
+      return fetch(`http://localhost:4000/traerUsuarios`, {
         method: "POST",
-        headers:{'Content-Type': 'application/json'},
         body:JSON.stringify(datos),
+        headers:{'Content-Type': 'application/json'}
     })
+    .then(response => response.json())
+    .then(result => {
+      console.log(result)
+      return result})
+  }
+  else{
     
-    console.log(result)
-  }
+    }
+}
+  
 
-  useEffect(() => {
-    console.log(nombre);
-  }, [nombre]);
 
-  useEffect(() => {
-    console.log(contraseña);
-  }, [contraseña]);
+useEffect(() => {
+  console.log(nombre);
+}, [nombre]);
 
-  if (nuevoUsuario) {
-  }
+useEffect(() => {
+  console.log(contraseña);
+}, [contraseña]);
 
-  return (
-    <div className={styles.todo}>
-      <div className={styles.container}>
-            <h1 className={styles.header}>Iniciar Sesión</h1>
-            <Input tipo="login" placeholder="Nombre" onChange={modificarNombre}></Input>
-            <Input tipo="login" placeholder="Contraseña" onChange={modificarContraseña}></Input>
-            <Input tipo="login" placeholder="Número" onChange={modificarNumero}></Input>
-            <h2 className={styles.h2}>¿Eres nuevo?</h2>
-            <input type="checkbox" onChange={checkboxActivado} />
-            <h2>{nombre}</h2>
-            <h2>{contraseña}</h2>
-            <h2>{numero}</h2>
-            <Boton text="INGRESAR" tipo="login" onClick={ingresar}></Boton>
-      </div>
+
+
+return <>
+  <div className={styles.todo}>
+    <div className={styles.container}>
+          <h1 className={styles.header}>Iniciar Sesión</h1>
+          <Input tipo="login" placeholder="Nombre" onChange={modificarNombre}></Input>
+          <Input tipo="login" placeholder="Contraseña" onChange={modificarContraseña}></Input>
+          <Input tipo="login" placeholder="Número" onChange={modificarNumero}></Input>
+          <h2 className={styles.h2}>¿Eres nuevo?</h2>
+          <input type="checkbox" onChange={checkboxActivado} />
+          <h2>{nombre}</h2>
+          <h2>{contraseña}</h2>
+          <h2>{numero}</h2>
+          <Boton text="INGRESAR" tipo="login" onClick={ingresar}></Boton>
     </div>
-    
-  );
+  </div>
+  
+;
+</>
 }
