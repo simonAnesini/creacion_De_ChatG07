@@ -16,9 +16,7 @@ app.listen(port, () => {
 
 app.post("/traerUsuarios", async function(req,res){
   try {
-    console.log("funcionando :D")
       let validacion = await realizarQuery(`SELECT * FROM Users WHERE numero = "${req.body.numero}"`)
-      console.log(validacion)
       if (validacion.length === 0) {
        await realizarQuery(`INSERT INTO Users (nombre, contraseña, numero) VALUES
           ("${req.body.nombre}", "${req.body.contraseña}", "${req.body.numero}")`)
