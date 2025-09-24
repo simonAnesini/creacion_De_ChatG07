@@ -3,12 +3,18 @@ import Boton from "@/componentes/Boton";
 import Input from "@/componentes/Input";
 import { useEffect, useState } from "react";
 import styles from "@/app/login/page.module.css";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [nombre, setNombre] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [numero, setNumero] = useState(0);
   const [nuevoUsuario, setNuevo] = useState(false);
+  const [id, setId] = useState("");
+  const router = useRouter();
+  const irAChat = () => {
+    router.push("/chat");
+    };
 
   function modificarNombre(event) {
     setNombre(event.target.value);
@@ -30,6 +36,7 @@ export default function Login() {
   }
 
   async function ingresar() {
+     setId(numero)
     if (nuevoUsuario) {
 
       let datos = {
@@ -45,11 +52,27 @@ export default function Login() {
     })
     .then(response => response.json())
     .then(result => {
-      console.log(result)
-      return result})
+      setId(result.numero)
+      localStorage.setItem("id", id)
+      irAChat()
+    })
   }
   else{
-    
+    let datos = {
+      nombre: nombre,
+      contraseña: contraseña,
+      numero: numero,
+    }
+    console.log(nombre)
+    return fetch(`http://localhost:4000/traerUsuarios`, {
+      body:JSON.stringify(datos),
+      headers:{'Content-Type': 'application/json'} 
+  .then(response => response.json())
+  .then(result => {
+    setId(result.numero)
+    localStorage.setItem("id", id)
+    irAChat()
+  })
     }
 }
   

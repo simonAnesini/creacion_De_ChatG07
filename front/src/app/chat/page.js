@@ -2,7 +2,6 @@
 
 import Boton from "@/componentes/Boton";
 import { useEffect, useState } from "react";
-import styles from "@/app/chat/page.module.css";
 
 export default function ChatPage() {
 
