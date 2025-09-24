@@ -12,9 +12,10 @@ export default function Login() {
   const [nuevoUsuario, setNuevo] = useState(false);
   const [id, setId] = useState("");
   const router = useRouter();
+
   const irAChat = () => {
     router.push("/chat");
-    };
+  };
 
   function modificarNombre(event) {
     setNombre(event.target.value);
@@ -25,72 +26,60 @@ export default function Login() {
   }
 
   function modificarNumero(event) {
-    console.log(numero)
     setNumero(event.target.value);
-    
   }
 
   function checkboxActivado(event) {
-    console.log(event.target.checked);
     setNuevo(event.target.checked);
   }
 
   async function ingresar() {
-     setId(numero)
-    if (nuevoUsuario) {
-
-      let datos = {
-        nombre: nombre,
-        contraseña: contraseña,
-        numero: numero,
-      }
-      console.log(nombre)
-      return fetch(`http://localhost:4000/traerUsuarios`, {
-        method: "POST",
-        body:JSON.stringify(datos),
-        headers:{'Content-Type': 'application/json'}
-    })
-    .then(response => response.json())
-    .then(result => {
-      setId(result.numero)
-      localStorage.setItem("id", id)
-      irAChat()
-    })
-  }
-  else{
-    let datos = {
+    setId(numero);
+    const datos = {
       nombre: nombre,
       contraseña: contraseña,
       numero: numero,
+    };
+
+    if (nuevoUsuario) {
+      return fetch(`http://localhost:4000/traerUsuarios`, {
+        method: "POST",
+        body: JSON.stringify(datos),
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          setId(result.numero);
+          localStorage.setItem("id", result.numero);
+          irAChat();
+        });
+    } else {
+      return fetch(`http://localhost:4000/traerUsuarios`, {
+        method: "POST",
+        body: JSON.stringify(datos),
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          setId(result.numero);
+          localStorage.setItem("id", result.numero);
+          irAChat();
+        });
     }
-    console.log(nombre)
-    return fetch(`http://localhost:4000/traerUsuarios`, {
-      body:JSON.stringify(datos),
-      headers:{'Content-Type': 'application/json'} 
-  .then(response => response.json())
-  .then(result => {
-    setId(result.numero)
-    localStorage.setItem("id", id)
-    irAChat()
-  })
-    }
-}
-  
+  }
 
+  useEffect(() => {
+    console.log(nombre);
+  }, [nombre]);
 
-useEffect(() => {
-  console.log(nombre);
-}, [nombre]);
+  useEffect(() => {
+    console.log(contraseña);
+  }, [contraseña]);
 
-useEffect(() => {
-  console.log(contraseña);
-}, [contraseña]);
-
-
-
-return <>
-  <div className={styles.todo}>
-    <div className={styles.container}>
+  return (
+    <>
+      <div className={styles.todo}>
+        <div className={styles.container}>
           <h1 className={styles.header}>Iniciar Sesión</h1>
           <Input tipo="login" placeholder="Nombre" onChange={modificarNombre}></Input>
           <Input tipo="login" placeholder="Contraseña" onChange={modificarContraseña}></Input>
@@ -101,9 +90,8 @@ return <>
           <h2>{contraseña}</h2>
           <h2>{numero}</h2>
           <Boton text="INGRESAR" tipo="login" onClick={ingresar}></Boton>
-    </div>
-  </div>
-  
-;
-</>
+        </div>
+      </div>
+    </>
+  );
 }
