@@ -35,13 +35,14 @@ export default function Login() {
 
   async function ingresar() {
     setId(numero);
+    
     const datos = {
       nombre: nombre,
       contraseña: contraseña,
       numero: numero,
+      nuevoUsuario:nuevoUsuario,
     };
 
-    if (nuevoUsuario) {
       return fetch(`http://localhost:4000/traerUsuarios`, {
         method: "POST",
         body: JSON.stringify(datos),
@@ -53,20 +54,8 @@ export default function Login() {
           localStorage.setItem("id", result.numero);
           irAChat();
         });
-    } else {
-      return fetch(`http://localhost:4000/traerUsuarios`, {
-        method: "POST",
-        body: JSON.stringify(datos),
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          setId(result.numero);
-          localStorage.setItem("id", result.numero);
-          irAChat();
-        });
-    }
-  }
+    
+      }
 
   useEffect(() => {
     console.log(nombre);

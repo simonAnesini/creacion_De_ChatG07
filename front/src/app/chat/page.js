@@ -211,7 +211,7 @@ export default function ChatsPage() {
             <div className={styles.messages}>
               {mensajes.length === 0 && <div className={styles.noMessages}>No hay mensajes</div>}
               {mensajes.map((m, idx) => (
-                <Mensaje key={idx} texto={m.texto} numero={m.numero} isMine={String(m.numero) === String(localStorage.getItem("userNumero"))} />
+                <Mensaje key={idx} texto={m.texto} numero={m.numero} isMine={String(m.numero) === localStorage.getItem("id")> <mensaje/>
               ))}
             </div>
 

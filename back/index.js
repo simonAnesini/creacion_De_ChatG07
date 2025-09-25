@@ -15,7 +15,11 @@ app.listen(port, () => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/traerUsuarios", async function(req,res){
+
+
+ 
   try {
+    if(req.body.nuevoUsuario){
       let validacion = await realizarQuery(`SELECT * FROM Users WHERE numero = "${req.body.numero}"`)
       if (validacion.length === 0) {
        await realizarQuery(`INSERT INTO Users (nombre, contraseña, numero) VALUES
@@ -24,7 +28,17 @@ app.post("/traerUsuarios", async function(req,res){
       } else {
         res.send("ya existe un usuario con este numero")
       }
+    }else{
+      let validacion = await realizarQuery(`SELECT * FROM Users WHERE numero = "${req.body.numero}" and contraseña = "${req.body.contraseña}" and nombre = "${req.body.nombre}"`)
+      if (validacion.length === 0) {
+       await realizarQuery(`INSERT INTO Users (nombre, contraseña, numero) VALUES
+          ("${req.body.nombre}", "${req.body.contraseña}", "${req.body.numero}")`)
+          res.send(req.body.numero)
+      } else {
+        res.send("ya existe un usuario con este numero")
+    }}
   }catch (error) {
+    console.log(req.body)
      res.send(error)
   }
   
