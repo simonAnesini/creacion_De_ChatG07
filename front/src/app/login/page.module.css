@@ -23,7 +23,7 @@
 .container {
   margin-top: 30px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 60px;
   background-color: #f9fafb;
   border: 3px solid #104814;
