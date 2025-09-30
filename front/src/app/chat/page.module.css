@@ -1,0 +1,113 @@
+/* src/app/chat/page.module.css */
+.container {
+    display: flex;
+    height: 100vh;
+    gap: 18px;
+    padding: 20px;
+    background: linear-gradient(180deg,#f7f9fc 0%, #eef3fb 100%);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  }
+  
+  .sidebar {
+    width: 320px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(20,30,80,0.06);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .top {
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f2f7;
+  }
+  
+  .list {
+    padding: 12px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  
+  .list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .list li {
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  
+  .empty {
+    color: #9aa;
+    text-align: center;
+    padding: 12px;
+  }
+  
+  .chatArea {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(20,30,80,0.06);
+    overflow: hidden;
+  }
+  
+  .headerChat {
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f2f7;
+  }
+  
+  .messages {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-image: repeating-linear-gradient(transparent, transparent 120px, rgba(0,0,0,0.01) 121px);
+  }
+  
+  .noMessages {
+    color: #666;
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .inputRow {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    border-top: 1px solid #f0f2f7;
+    align-items: center;
+  }
+  
+  .emptySelect {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #567;
+  }
+  
+  /* modal */
+  .modal {
+    padding: 18px;
+    max-width: 420px;
+  }
+  
+  .modalActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
