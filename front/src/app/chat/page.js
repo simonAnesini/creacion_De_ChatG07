@@ -46,10 +46,7 @@ export default function ChatsPage() {
         // si el chat abierto es el del mensaje, agregalo
         if (selectedChat && String(msg.id_chat) === String(selectedChat.id)) {
           setMensajes((prev) => [...prev, msg]);
-        } else {
-          // opcional: podrías marcar el chat como con mensajes no leídos
-          // console.log("Mensaje para otro chat:", msg.id_chat);
-        }
+        } 
       }
     });
 
@@ -62,8 +59,7 @@ export default function ChatsPage() {
     return () => {
       socket.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat]); // re-evalua listener behavior al cambiar selectedChat para control visual (seguro)
+  }, [selectedChat]); 
 
   useEffect(() => {
     const numero = localStorage.getItem("userNumero");
@@ -111,7 +107,7 @@ export default function ChatsPage() {
     try {
       let body;
       if (isGroup) {
-        // membersInput: "1155,1166,1177" -> incluimos al creador automáticamente
+        // incluir al creador automáticamente
         const members = membersInput.split(",").map(m => m.trim()).filter(Boolean);
         if (members.length === 0) {
           alert("Ingresá al menos un número para el grupo");
@@ -121,7 +117,7 @@ export default function ChatsPage() {
           alert("Ingresá un nombre para el grupo");
           return;
         }
-        // asegurate que el creador esté en la lista
+        // asegurar que el creador esté en la lista
         if (!members.includes(userNumero)) members.push(userNumero);
         body = { userNumero, members, groupName: groupName.trim() };
       } else {
@@ -141,7 +137,7 @@ export default function ChatsPage() {
         closePopup();
         cargarChats(userNumero);
         if (result.chatId) {
-          // seleccionar nuevo chat (espera un momento a que chats se refresquen)
+          // seleccionar nuevo chat 
           setTimeout(() => {
             // encontrar chat en lista y seleccionarlo
             cargarChats(userNumero).then(() => {
@@ -197,7 +193,7 @@ export default function ChatsPage() {
     setNuevoMensaje("");
 
     try {
-      // POST -> backend guarda y emite 'newMessage' al room correspondiente
+      // backend guarda y emite 'newMessage' al room correspondiente
       await fetch("http://localhost:4000/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -222,12 +218,7 @@ export default function ChatsPage() {
       <aside className={styles.sidebar}>
         <div className={styles.top}>
           <h2>Chats</h2>
-          <div>
-            <Boton text="Nuevo chat" tipo="small" onClick={openPopup} />
-            <Boton text={isConnected ? "Ping ✅" : "Ping ❌"} tipo="small" onClick={sendPingAll} />
-          </div>
         </div>
-
         <div className={styles.list}>
           <ul>
             {chats.length === 0 && <li className={styles.empty}>No hay chats</li>}
@@ -252,7 +243,6 @@ export default function ChatsPage() {
                     : null}
                 </div>
               </div>
-              <span>{isConnected ? "🟢 Online" : "🔴 Offline"}</span>
             </div>
 
             <div className={styles.messages}>
