@@ -15,28 +15,14 @@ export default function Login() {
   const [mensaje, setMensaje] = useState("");
   const router = useRouter();
 
-  function modificarNombre(event) {
-    setNombre(event.target.value);
-  }
-
-  function modificarContraseña(event) {
-    setContraseña(event.target.value);
-  }
-
-  function modificarNumero(event) {
-    setNumero(event.target.value);
-  }
-
-  function modificarFoto(event) {
-    setFoto(event.target.value);
-  }
-
-  function checkboxActivado(event) {
-    setNuevo(event.target.checked);
-  }
+  function modificarNombre(event) { setNombre(event.target.value); }
+  function modificarContraseña(event) { setContraseña(event.target.value); }
+  function modificarNumero(event) { setNumero(event.target.value); }
+  function modificarFoto(event) { setFoto(event.target.value); }
+  function checkboxActivado(event) { setNuevo(event.target.checked); }
 
   async function ingresar() {
-    // Registro
+    // Registro -> usa /users/register
     if (nuevoUsuario) {
       if (!nombre || !contraseña || !numero) {
         setMensaje("Completá nombre, contraseña y número para registrarte");
@@ -44,7 +30,7 @@ export default function Login() {
       }
       const datos = { nombre, contraseña, numero, foto: foto || "" };
       try {
-        const res = await fetch("http://localhost:4000/traerUsuarios", {
+        const res = await fetch("http://localhost:4000/users/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(datos),
@@ -65,7 +51,7 @@ export default function Login() {
           // autologin y redirect a chat
           localStorage.setItem("userNumero", numero);
           localStorage.setItem("userNombre", nombre);
-          router.push("/chat"); // tu ruta de chats (ajustá si es /chats)
+          router.push("/chat");
         }
       } catch (err) {
         console.error(err);
@@ -74,7 +60,7 @@ export default function Login() {
       return;
     }
 
-    // Login
+    // Login -> usa /users/login
     if (!numero || !contraseña) {
       setMensaje("Completá número y contraseña");
       return;
@@ -82,16 +68,17 @@ export default function Login() {
 
     try {
       const datosLogin = { numero, contraseña };
-      const resp = await fetch("http://localhost:4000/loginUser", {
+      const resp = await fetch("http://localhost:4000/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(datosLogin),
       });
       const result = await resp.json();
-      console.log("loginUser:", result);
+      console.log("users/login:", result);
       if (result.validar === true) {
         localStorage.setItem("userNumero", numero);
         localStorage.setItem("userNombre", result.nombre || nombre || "");
+        localStorage.setItem("userFoto", result.foto || "");
         setMensaje("Login exitoso");
         router.push("/chat");
       } else {
@@ -103,13 +90,8 @@ export default function Login() {
     }
   }
 
-  useEffect(() => {
-    console.log("nombre:", nombre);
-  }, [nombre]);
-
-  useEffect(() => {
-    console.log("contraseña:", contraseña);
-  }, [contraseña]);
+  useEffect(() => { console.log("nombre:", nombre); }, [nombre]);
+  useEffect(() => { console.log("contraseña:", contraseña); }, [contraseña]);
 
   return (
     <>

@@ -22,8 +22,8 @@ server.listen(port, () => console.log(`Server running on http://localhost:${port
 
 /* Endpoints */
 
-// Registro (ruta que ya tenías)
-app.post("/traerUsuarios", async (req, res) => {
+
+app.post("/users/register", async (req, res) => {
   try {
     const { nombre, contraseña, numero, foto } = req.body;
     const validacion = await realizarQuery(`SELECT * FROM Users WHERE numero = "${numero}"`);
@@ -39,8 +39,8 @@ app.post("/traerUsuarios", async (req, res) => {
   }
 });
 
-// Login
-app.post("/loginUser", async (req, res) => {
+
+app.post("/users/login", async (req, res) => {
   try {
     const { numero, contraseña } = req.body;
     const result = await realizarQuery(`SELECT * FROM Users WHERE numero = "${numero}" AND contraseña = "${contraseña}"`);
@@ -55,12 +55,14 @@ app.post("/loginUser", async (req, res) => {
   }
 });
 
-// Traer chats asociados a un numero (incluye participantes y foto/fallback)
+/**
+ * Traer chats asociados a un numero (incluye participants y usa la columna Chat.foto si existe)
+ */
 app.post("/chatsUser", async (req, res) => {
   try {
     const { numero } = req.body;
     const chatsRows = await realizarQuery(`
-      SELECT DISTINCT c.id, c.es_grupo, c.nombre
+      SELECT DISTINCT c.id, c.es_grupo, c.nombre, c.foto
       FROM Chat c
       INNER JOIN UsuariosXChat uc ON uc.id_chat = c.id
       WHERE uc.numero = "${numero}"
@@ -74,24 +76,24 @@ app.post("/chatsUser", async (req, res) => {
         LEFT JOIN Users u ON u.numero = uc.numero
         WHERE uc.id_chat = ${c.id}
       `);
-      // build display_name and photo
+
       let display_name = c.nombre || "";
-      let photo = "";
+      let photo = c.foto || "";
 
       if (c.es_grupo === 0) {
-        // one-to-one: show the other user
+        
         const other = participants.find(p => String(p.numero) !== String(numero));
         if (other) {
           display_name = other.nombre || other.numero;
-          photo = other.foto || "";
+          photo = photo || other.foto || "";
         } else if (participants.length === 1) {
           display_name = participants[0].nombre || participants[0].numero;
-          photo = participants[0].foto || "";
+          photo = photo || participants[0].foto || "";
         }
       } else {
-        // group: use chat.nombre as display name
+        
         display_name = c.nombre || "Grupo";
-        photo = ""; // opcional: podrías tener photo_group column
+       
       }
 
       return {
@@ -111,15 +113,19 @@ app.post("/chatsUser", async (req, res) => {
   }
 });
 
-// Crear nuevo chat (private o grupo)
+/**
+ * Crear nuevo chat (grupo o 1-1).
+ * Si envían groupPhoto -> lo guardamos en Chat.foto al crear grupo.
+ */
 app.post("/newChat", async (req, res) => {
   try {
-    const { userNumero, targetNumero, members, groupName } = req.body;
+    const { userNumero, targetNumero, members, groupName, groupPhoto } = req.body;
 
     // Si members existe -> crear grupo
     if (Array.isArray(members) && members.length > 0) {
-      // Crear chat grupo
-      const insert = await realizarQuery(`INSERT INTO Chat (es_grupo, nombre) VALUES (1, "${groupName || ""}")`);
+      // Insert con foto (si vino)
+      const fotoValue = (groupPhoto && groupPhoto.trim()) ? groupPhoto.replace(/"/g, '\\"') : "";
+      const insert = await realizarQuery(`INSERT INTO Chat (es_grupo, nombre, foto) VALUES (1, "${(groupName||"").replace(/"/g,'\\"')}", "${fotoValue}")`);
       const chatId = insert.insertId;
 
       // Insertar miembros en UsuariosXChat (evitar duplicados)
@@ -127,7 +133,7 @@ app.post("/newChat", async (req, res) => {
       for (const m of uniqueMembers) {
         await realizarQuery(`INSERT INTO UsuariosXChat (id_chat, numero) VALUES (${chatId}, "${m}")`);
       }
-      return res.send({ res: true, existing: false, chatId, chatName: groupName || "" });
+      return res.send({ res: true, existing: false, chatId, chatName: groupName || "", chatPhoto: fotoValue || null });
     }
 
     // Si no es grupo -> chat 1-1 con targetNumero
@@ -164,7 +170,21 @@ app.post("/newChat", async (req, res) => {
   }
 });
 
-// Historial de chat
+
+app.post("/chat/setPhoto", async (req, res) => {
+  try {
+    const { chatId, fotoUrl } = req.body;
+    if (!chatId) return res.send({ ok: false, message: "No se indicó chatId" });
+    const safeUrl = (fotoUrl || "").replace(/"/g, '\\"');
+    await realizarQuery(`UPDATE Chat SET foto = "${safeUrl}" WHERE id = ${chatId}`);
+    return res.send({ ok: true, message: "Foto del chat actualizada", chatId, foto: safeUrl });
+  } catch (error) {
+    console.error("chat/setPhoto error:", error);
+    res.status(500).send({ ok: false, message: "Error al actualizar foto" });
+  }
+});
+
+
 app.post("/chatHistory", async (req, res) => {
   try {
     const { id_chat } = req.body;
@@ -181,7 +201,7 @@ app.post("/chatHistory", async (req, res) => {
   }
 });
 
-// Guardar mensaje (POST) -> guarda y emite a la sala
+
 app.post("/messages", async (req, res) => {
   try {
     const { id_chat, texto, numero } = req.body;
@@ -198,7 +218,7 @@ app.post("/messages", async (req, res) => {
   }
 });
 
-/* SOCKET.IO */
+
 io.on("connection", (socket) => {
   console.log("Cliente socket conectado:", socket.id);
 
@@ -215,10 +235,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pingAll", (d) => {
-    io.emit("pingAll", { from: socket.id, payload: d });
+    io.emit("pingAll", { from: socket.id, payload: d }); 
   });
 
-  // si algún cliente usa socket.emit('sendMessage') (compatibilidad), guardamos y emitimos aquí también
   socket.on("sendMessage", async (data) => {
     try {
       const { id_chat, texto, numero } = data;
